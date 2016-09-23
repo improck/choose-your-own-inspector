@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+﻿using UnityEditor;
+using UnityEngine;
+using System.Reflection;
 
 
-namespace ImpRock.MultiEdit.Editor
+namespace ImpRock.Cyoi.Editor
 {
+	using Editor = UnityEditor.Editor;
+
+
 	[System.Serializable]
 	public class EditorInfo
 	{	
@@ -11,14 +16,20 @@ namespace ImpRock.MultiEdit.Editor
 		[SerializeField] private bool m_ForceInvalid = false;
 		
 		
-		public UnityEditor.Editor Editor { get { return m_Editor; } }
+		public Editor Editor { get { return m_Editor; } }
 		public bool FoldedOut { get { return m_FoldedOut; } set { m_FoldedOut = value; } }
 		public bool ForceInvalid { get { return m_ForceInvalid; } set { m_ForceInvalid = value; } }
 
 
-		public EditorInfo(UnityEditor.Editor editor)
+		public EditorInfo(Editor editor)
 		{
 			m_Editor = editor;
+
+			//TODO: set MaterialEditor.forceVisible = true
+			if (editor.target is Material)
+				Editor.GetType()
+					.GetProperty("forceVisible", BindingFlags.Instance | BindingFlags.NonPublic)
+					.SetValue(editor, true, null);
 		}
 
 		public bool IsValid()

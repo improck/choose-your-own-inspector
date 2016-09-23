@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImpRock.MultiEdit.Editor", "ImpRock.MultiEdit.Editor\ImpRock.MultiEdit.Editor.csproj", "{B96A1915-26EE-4CDF-9C2F-06DE84359F28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImpRock.Cyoi.Editor", "ImpRock.Cyoi.Editor\ImpRock.Cyoi.Editor.csproj", "{B96A1915-26EE-4CDF-9C2F-06DE84359F28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

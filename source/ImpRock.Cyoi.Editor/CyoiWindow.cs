@@ -3,9 +3,9 @@ using UnityEngine;
 using System.Collections.Generic;
 
 
-namespace ImpRock.MultiEdit.Editor
+namespace ImpRock.Cyoi.Editor
 {
-	public class MultiEditWindow : EditorWindow
+	internal sealed class CyoiWindow : EditorWindow
 	{
 		[SerializeField] private List<EditorContainer> m_EditorContainers = new List<EditorContainer>();
 		[SerializeField] private Vector2 m_ScrollPosition = Vector2.zero;
@@ -72,21 +72,11 @@ namespace ImpRock.MultiEdit.Editor
 			m_EditorSpacingStyle = new GUIStyle();
 			m_EditorSpacingStyle.name = "EditorSpacing";
 			m_EditorSpacingStyle.padding = new RectOffset(16, 4, 0, 0);
-			
-			//GUISkin skin = Instantiate(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene));
-			//skin.name = "Skin_Scene";
-			//AssetDatabase.CreateAsset(skin, "Assets/" + skin.name + ".guiskin");
-			//skin = Instantiate(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Game));
-			//skin.name = "Skin_Game";
-			//AssetDatabase.CreateAsset(skin, "Assets/" + skin.name + ".guiskin");
-			//skin = Instantiate(EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector));
-			//skin.name = "Skin_Inspector";
-			//AssetDatabase.CreateAsset(skin, "Assets/" + skin.name + ".guiskin");
 		}
 
 		private void OnEnable()
 		{
-			titleContent.text = "MultiEdit";
+			titleContent.text = "CYOI";
 			Vector2 min = minSize;
 			min.x = 280.0f;
 			minSize = min;
@@ -170,12 +160,12 @@ namespace ImpRock.MultiEdit.Editor
 		}
 
 
-		[MenuItem("CONTEXT/Component/Add to MultiEdit", priority = 1000, validate = false)]
-		[MenuItem("CONTEXT/ScriptableObject/Add to MultiEdit", priority = 1000, validate = false)]
-		[MenuItem("CONTEXT/Material/Add to MultiEdit", priority = 1000, validate = false)]
-		public static void Context_AddToMultiEdit(MenuCommand command)
+		[MenuItem("CONTEXT/Component/Add to CYOI", priority = 29, validate = false)]
+		[MenuItem("CONTEXT/ScriptableObject/Add to CYOI", priority = 29, validate = false)]
+		[MenuItem("CONTEXT/Material/Add to CYOI", priority = 29, validate = false)]
+		public static void Context_AddToCyoi(MenuCommand command)
 		{
-			MultiEditWindow window = GetWindow<MultiEditWindow>();
+			CyoiWindow window = GetWindow<CyoiWindow>();
 			window.AddEditorForTarget(command.context);
 			window.Show();
 		}

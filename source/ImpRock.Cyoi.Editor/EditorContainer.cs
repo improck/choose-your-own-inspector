@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 
 
-namespace ImpRock.MultiEdit.Editor
+namespace ImpRock.Cyoi.Editor
 {
+	using Editor = UnityEditor.Editor;
+
+
 	[System.Serializable]
 	public class EditorContainer
 	{
@@ -27,14 +30,14 @@ namespace ImpRock.MultiEdit.Editor
 
 			m_TitleContent = new GUIContent(m_Owner.name);
 
-			m_EditorInfos.Add(new EditorInfo(UnityEditor.Editor.CreateEditor(target)));
+			m_EditorInfos.Add(new EditorInfo(Editor.CreateEditor(target)));
 		}
 
 		public void AddEditorForTarget(Object target)
 		{
 			if (!m_EditorInfos.Exists(e => e.Editor.target == target))
 			{
-				m_EditorInfos.Add(new EditorInfo(UnityEditor.Editor.CreateEditor(target)));
+				m_EditorInfos.Add(new EditorInfo(Editor.CreateEditor(target)));
 			}
 		}
 		

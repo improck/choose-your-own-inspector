@@ -7,8 +7,8 @@
     <ProjectGuid>{B96A1915-26EE-4CDF-9C2F-06DE84359F28}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ImpRock.MultiEdit.Editor</RootNamespace>
-    <AssemblyName>ImpRock.MultiEdit.Editor</AssemblyName>
+    <RootNamespace>ImpRock.Cyoi.Editor</RootNamespace>
+    <AssemblyName>ImpRock.Cyoi.Editor</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -35,9 +35,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="CyoiWindow.cs" />
     <Compile Include="EditorContainer.cs" />
     <Compile Include="EditorInfo.cs" />
-    <Compile Include="MultiEditWindow.cs" />
+    <Compile Include="Gui\GraphicAssets.cs" />
+    <Compile Include="Gui\GuiBase.cs" />
+    <Compile Include="Gui\RectRef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -51,8 +54,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)..\unityproject\Assets\ImpRock\MultiEdit\Editor
-copy $(TargetDir)$(TargetName).pdb $(SolutionDir)..\unityproject\Assets\ImpRock\MultiEdit\Editor</PostBuildEvent>
+    <PostBuildEvent>copy $(TargetPath) $(SolutionDir)..\unityproject\Assets\ImpRock\CYOI\Editor
+copy $(TargetDir)$(TargetName).pdb $(SolutionDir)..\unityproject\Assets\ImpRock\CYOI\Editor</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
