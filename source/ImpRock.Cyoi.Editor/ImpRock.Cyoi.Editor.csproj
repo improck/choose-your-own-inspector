@@ -38,9 +38,9 @@
     <Compile Include="CyoiWindow.cs" />
     <Compile Include="EditorContainer.cs" />
     <Compile Include="EditorInfo.cs" />
-    <Compile Include="Gui\GraphicAssets.cs" />
-    <Compile Include="Gui\GuiBase.cs" />
-    <Compile Include="Gui\RectRef.cs" />
+    <Compile Include="src\Gui\GraphicAssets.cs" />
+    <Compile Include="src\Gui\GuiBase.cs" />
+    <Compile Include="src\Gui\RectRef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
