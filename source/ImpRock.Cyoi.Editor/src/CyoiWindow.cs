@@ -5,37 +5,43 @@ using System.Collections.Generic;
 
 namespace ImpRock.Cyoi.Editor
 {
-	internal sealed class CyoiWindow : EditorWindow
+	public sealed class CyoiWindow : EditorWindow
 	{
+		internal static int RequiresContantUpdateCounter = 0;
+
+
 		[SerializeField] private List<EditorContainer> m_EditorContainers = new List<EditorContainer>();
 		[SerializeField] private Vector2 m_ScrollPosition = Vector2.zero;
 
 		private bool m_Initialized = false;
-
+		private double m_LastRepaintTime = 0.0;
+		
 		private GUIStyle m_MainBorderStyle = null;
 		private GUIStyle m_MainBorderCollapsedStyle = null;
 		private GUIStyle m_HeaderBorderStyle = null;
 		private GUIStyle m_HeaderFoldoutStyle = null;
 		private GUIStyle m_ButtonCloseStyle = null;
+		private GUIStyle m_SubEditorHeaderStyle = null;
 		private GUIStyle m_EditorSpacingStyle = null;
+
+
+		private const double ConstantRepaintFrameTime = 0.033333333333333;
 
 		
 		public void AddEditorForTarget(Object target)
 		{
-			Debug.Log(target.GetType());
+			if (target == null)
+				return;
 
-			Object owner = EditorContainer.GetTargetOwner(target);
-
+			Object owner = CyoiWindow.GetTargetOwner(target);
 			EditorContainer container = m_EditorContainers.Find(c => c.Owner == owner);
-			if (container != null)
+			if (container == null)
 			{
-				container.AddEditorForTarget(target);
-			}
-			else
-			{
-				container = new EditorContainer(target);
+				container = new EditorContainer(owner);
 				m_EditorContainers.Add(container);
 			}
+
+			container.AddEditorForTarget(target);
 		}
 		
 		private void Initialize()
@@ -70,9 +76,11 @@ namespace ImpRock.Cyoi.Editor
 			m_ButtonCloseStyle.name = "ButtonClose";
 			m_ButtonCloseStyle.margin.top = 4;
 
+			m_SubEditorHeaderStyle = new GUIStyle(editorSkin.GetStyle("OL Title"));
+
 			m_EditorSpacingStyle = new GUIStyle();
 			m_EditorSpacingStyle.name = "EditorSpacing";
-			m_EditorSpacingStyle.padding = new RectOffset(12, 4, 0, 0);
+			m_EditorSpacingStyle.padding = new RectOffset(1, 1, 0, -3);
 		}
 
 		private void OnEnable()
@@ -81,8 +89,17 @@ namespace ImpRock.Cyoi.Editor
 			Vector2 min = minSize;
 			min.x = 280.0f;
 			minSize = min;
+
+			EditorApplication.hierarchyWindowChanged += CleanupEditorContainers;
+			EditorApplication.projectWindowChanged += CleanupEditorContainers;
 		}
 
+		private void OnDisable()
+		{
+			EditorApplication.hierarchyWindowChanged -= CleanupEditorContainers;
+			EditorApplication.projectWindowChanged -= CleanupEditorContainers;
+		}
+		
 		private void OnGUI()
 		{
 			Initialize();
@@ -136,16 +153,27 @@ namespace ImpRock.Cyoi.Editor
 
 										if (infos[j].FoldedOut)
 										{
-
 											infos[j].Editor.OnInspectorGUI();
 										}
 									}
 								}
 								else
 								{
+									GUILayout.BeginVertical(m_EditorSpacingStyle);
+									{
+										EditorInfo info = m_EditorContainers[i].EditorInfos[0];
+										info.Editor.DrawHeader();
+										info.Editor.OnInspectorGUI();
 
-									m_EditorContainers[i].EditorInfos[0].Editor.DrawHeader();
-									m_EditorContainers[i].EditorInfos[0].Editor.OnInspectorGUI();
+										if (info.DrawSubEditor)
+										{
+											//TODO: should there be better text here?
+											GUILayout.Label("Imported Object", m_SubEditorHeaderStyle);
+											info.SubEditor.DrawHeader();
+											info.SubEditor.OnInspectorGUI();
+										}
+									}
+									GUILayout.EndVertical();
 								}
 
 								//TODO: draw optional preview?
@@ -163,12 +191,41 @@ namespace ImpRock.Cyoi.Editor
 
 			if (hasInvalid)
 			{
-				foreach (EditorContainer container in m_EditorContainers)
-				{
-					container.RemoveInvalidEditors();
-				}
+				CleanupEditorContainers();
+			}
+		}
 
-				m_EditorContainers.RemoveAll(c => !c.IsValid());
+		private void Update()
+		{
+			if (CyoiWindow.RequiresContantUpdateCounter > 0
+				&& m_LastRepaintTime + ConstantRepaintFrameTime < EditorApplication.timeSinceStartup)
+			{
+				m_LastRepaintTime = EditorApplication.timeSinceStartup;
+				Repaint();
+			}
+		}
+
+		private void CleanupEditorContainers()
+		{
+			foreach (EditorContainer container in m_EditorContainers)
+			{
+				container.RemoveInvalidEditors();
+			}
+
+			m_EditorContainers.RemoveAll(c => !c.IsValid());
+
+			Repaint();
+		}
+
+		private static Object GetTargetOwner(Object target)
+		{
+			if (target is Component)
+			{
+				return ((Component)target).gameObject;
+			}
+			else
+			{
+				return target;
 			}
 		}
 

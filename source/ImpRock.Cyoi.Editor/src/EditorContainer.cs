@@ -25,20 +25,24 @@ namespace ImpRock.Cyoi.Editor
 		public List<EditorInfo> EditorInfos { get { return m_EditorInfos; } }
 
 
-		public EditorContainer(Object target)
+		public EditorContainer(Object owner)
 		{
-			m_Owner = GetTargetOwner(target);
-
+			m_Owner = owner;
 			m_TitleContent = new GUIContent(m_Owner.name);
-
-			m_EditorInfos.Add(new EditorInfo(Editor.CreateEditor(target)));
 		}
 
 		public void AddEditorForTarget(Object target)
 		{
 			if (!m_EditorInfos.Exists(e => e.Editor.target == target))
 			{
-				m_EditorInfos.Add(new EditorInfo(Editor.CreateEditor(target)));
+				Editor editor = Editor.CreateEditor(target);
+				//TODO: remove this
+				Debug.Log(target.GetType() + " -> " + editor.GetType());
+				EditorInfo editorInfo = new EditorInfo(editor);
+				m_EditorInfos.Add(editorInfo);
+
+				if (editorInfo.Editor.RequiresConstantRepaint())
+					CyoiWindow.RequiresContantUpdateCounter++;
 			}
 		}
 		
@@ -49,19 +53,20 @@ namespace ImpRock.Cyoi.Editor
 
 		public void RemoveInvalidEditors()
 		{
-			m_EditorInfos.RemoveAll(e => !e.IsValid());
-		}
-
-
-		public static Object GetTargetOwner(Object target)
-		{
-			if (target is Component)
+			for (int i = m_EditorInfos.Count - 1; i >= 0; i--)
 			{
-				return ((Component)target).gameObject;
-			}
-			else
-			{
-				return target;
+				EditorInfo editorInfo = m_EditorInfos[i];
+				if (!editorInfo.IsValid())
+				{
+					m_EditorInfos.RemoveAt(i);
+					if (editorInfo.Editor != null)
+					{
+						if (editorInfo.Editor.RequiresConstantRepaint())
+							CyoiWindow.RequiresContantUpdateCounter--;
+
+						Object.DestroyImmediate(editorInfo.Editor);
+					}
+				}
 			}
 		}
 	}
