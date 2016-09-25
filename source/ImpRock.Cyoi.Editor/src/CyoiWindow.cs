@@ -19,10 +19,11 @@ namespace ImpRock.Cyoi.Editor
 		private GUIStyle m_ButtonCloseStyle = null;
 		private GUIStyle m_EditorSpacingStyle = null;
 
-
+		
 		public void AddEditorForTarget(Object target)
 		{
 			Debug.Log(target.GetType());
+
 			Object owner = EditorContainer.GetTargetOwner(target);
 
 			EditorContainer container = m_EditorContainers.Find(c => c.Owner == owner);
@@ -43,7 +44,7 @@ namespace ImpRock.Cyoi.Editor
 				return;
 
 			m_Initialized = true;
-
+			
 			//TODO: distinguish between pro and "personal"
 			GUISkin editorSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector);
 
@@ -71,7 +72,7 @@ namespace ImpRock.Cyoi.Editor
 
 			m_EditorSpacingStyle = new GUIStyle();
 			m_EditorSpacingStyle.name = "EditorSpacing";
-			m_EditorSpacingStyle.padding = new RectOffset(16, 4, 0, 0);
+			m_EditorSpacingStyle.padding = new RectOffset(12, 4, 0, 0);
 		}
 
 		private void OnEnable()
@@ -88,6 +89,9 @@ namespace ImpRock.Cyoi.Editor
 
 			bool hasInvalid = false;
 
+			if (m_EditorContainers.Count == 0)
+				return;
+
 			m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 			{
 				for (int i = 0; i < m_EditorContainers.Count; i++)
@@ -96,43 +100,52 @@ namespace ImpRock.Cyoi.Editor
 					{
 						GUILayout.BeginVertical(m_EditorContainers[i].FoldedOut ? m_MainBorderStyle : m_MainBorderCollapsedStyle, GUILayout.MinHeight(22.0f));
 						{
-							GUILayout.BeginHorizontal(m_HeaderBorderStyle);
+							if (!m_EditorContainers[i].OwnsSelf || !m_EditorContainers[i].FoldedOut)
 							{
-								m_EditorContainers[i].FoldedOut = EditorGUILayout.Foldout(m_EditorContainers[i].FoldedOut, m_EditorContainers[i].TitleContent, m_HeaderFoldoutStyle);
-								
-								GUILayout.FlexibleSpace();
-								if (GUILayout.Button(GUIContent.none, m_ButtonCloseStyle, GUILayout.Width(16.0f), GUILayout.Height(16.0f)))
+								GUILayout.BeginHorizontal(m_HeaderBorderStyle);
 								{
-									m_EditorContainers[i].ForceInvalid = true;
-									hasInvalid = true;
+									m_EditorContainers[i].FoldedOut = EditorGUILayout.Foldout(m_EditorContainers[i].FoldedOut, m_EditorContainers[i].TitleContent, m_HeaderFoldoutStyle);
+
+									GUILayout.FlexibleSpace();
+									if (GUILayout.Button(GUIContent.none, m_ButtonCloseStyle, GUILayout.Width(16.0f), GUILayout.Height(16.0f)))
+									{
+										m_EditorContainers[i].ForceInvalid = true;
+										hasInvalid = true;
+									}
 								}
+								GUILayout.EndHorizontal();
 							}
-							GUILayout.EndHorizontal();
 
 							if (m_EditorContainers[i].FoldedOut)
 							{
-								List<EditorInfo> infos = m_EditorContainers[i].EditorInfos;
-								for (int j = 0; j < infos.Count; j++)
+								if (!m_EditorContainers[i].OwnsSelf)
 								{
-									GUILayout.BeginHorizontal();
+									List<EditorInfo> infos = m_EditorContainers[i].EditorInfos;
+									for (int j = 0; j < infos.Count; j++)
 									{
-										infos[j].FoldedOut = EditorGUILayout.InspectorTitlebar(infos[j].FoldedOut, infos[j].Editor.target);
-										if (GUILayout.Button(GUIContent.none, m_ButtonCloseStyle, GUILayout.Width(14.0f), GUILayout.Height(14.0f)))
+										GUILayout.BeginHorizontal();
 										{
-											infos[j].ForceInvalid = true;
-											hasInvalid = true;
+											infos[j].FoldedOut = EditorGUILayout.InspectorTitlebar(infos[j].FoldedOut, infos[j].Editor.target);
+											if (GUILayout.Button(GUIContent.none, m_ButtonCloseStyle, GUILayout.Width(14.0f), GUILayout.Height(14.0f)))
+											{
+												infos[j].ForceInvalid = true;
+												hasInvalid = true;
+											}
 										}
-									}
-									GUILayout.EndHorizontal();
+										GUILayout.EndHorizontal();
 
-									if (infos[j].FoldedOut)
-									{
-										GUILayout.BeginVertical(m_EditorSpacingStyle);
+										if (infos[j].FoldedOut)
 										{
+
 											infos[j].Editor.OnInspectorGUI();
 										}
-										GUILayout.EndVertical();
 									}
+								}
+								else
+								{
+
+									m_EditorContainers[i].EditorInfos[0].Editor.DrawHeader();
+									m_EditorContainers[i].EditorInfos[0].Editor.OnInspectorGUI();
 								}
 
 								//TODO: draw optional preview?
@@ -163,10 +176,12 @@ namespace ImpRock.Cyoi.Editor
 		[MenuItem("CONTEXT/Component/Add to CYOI", priority = 29, validate = false)]
 		[MenuItem("CONTEXT/ScriptableObject/Add to CYOI", priority = 29, validate = false)]
 		[MenuItem("CONTEXT/Material/Add to CYOI", priority = 29, validate = false)]
+		[MenuItem("CONTEXT/Object/Add to CYOI", priority = 29, validate = false)]
 		public static void Context_AddToCyoi(MenuCommand command)
 		{
 			CyoiWindow window = GetWindow<CyoiWindow>();
 			window.AddEditorForTarget(command.context);
+
 			window.Show();
 		}
 	}

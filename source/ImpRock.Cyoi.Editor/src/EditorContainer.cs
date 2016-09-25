@@ -19,6 +19,7 @@ namespace ImpRock.Cyoi.Editor
 
 		public Object Owner { get { return m_Owner; } }
 		public GUIContent TitleContent { get { return m_TitleContent; } }
+		public bool OwnsSelf { get {  return m_Owner != null && m_EditorInfos.Count > 0 && m_Owner == m_EditorInfos[0].Editor.target; } }
 		public bool FoldedOut { get { return m_FoldedOut; } set { m_FoldedOut = value; } }
 		public bool ForceInvalid { get { return m_ForceInvalid; } set { m_ForceInvalid = value; } }
 		public List<EditorInfo> EditorInfos { get { return m_EditorInfos; } }
@@ -43,7 +44,7 @@ namespace ImpRock.Cyoi.Editor
 		
 		public bool IsValid()
 		{
-			return !m_ForceInvalid && m_Owner != null && m_EditorInfos.Count > 0;
+			return !m_ForceInvalid && m_Owner != null && m_EditorInfos.Count > 0 && m_EditorInfos.TrueForAll(e => e.IsValid());
 		}
 
 		public void RemoveInvalidEditors()
@@ -58,16 +59,10 @@ namespace ImpRock.Cyoi.Editor
 			{
 				return ((Component)target).gameObject;
 			}
-			else if (target is ScriptableObject)
+			else
 			{
 				return target;
 			}
-			else if (target is Material)
-			{
-				return target;
-			}
-
-			return null;
 		}
 	}
 }
