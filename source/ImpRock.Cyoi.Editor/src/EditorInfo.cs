@@ -22,6 +22,16 @@ namespace ImpRock.Cyoi.Editor
 		public bool FoldedOut { get { return m_FoldedOut; } set { m_FoldedOut = value; } }
 		public bool ForceInvalid { get { return m_ForceInvalid; } set { m_ForceInvalid = value; } }
 		public bool DrawSubEditor { get { return m_DrawSubEditor; } }
+
+		public string EditorTitle
+		{
+			get
+			{
+				return (string)m_Editor.GetType()
+					.GetProperty("targetTitle", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+					.GetValue(m_Editor, null);
+			}
+		}
 		
 
 		public EditorInfo(Editor editor)

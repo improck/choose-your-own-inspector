@@ -28,30 +28,26 @@ namespace ImpRock.Cyoi.Editor
 
 		//***** IMAGES *****
 
-		public Texture2D IconPrefabNormal { get; private set; }
-		public Texture2D IconPrefabModel { get; private set; }
-		public Texture2D IconGameObject { get; private set; }
-		public Texture2D IconProjectView { get; private set; }
-		public Texture2D IconHierarchyView { get; private set; }
-		
+		//none
+
 		//***** GUI STYLES *****
-		
-		public GUIStyle LinkViewTitleStyle { get; private set; }
-		public GUIStyle LinkLabelStyle { get; private set; }
-		public GUIStyle DragDropInsertionStyle { get; private set; }
-		public GUIStyle FoldoutStyle { get; private set; }
+
+		public GUIStyle MainBorderStyle { get; private set; }
+		public GUIStyle MainBorderCollapsedStyle { get; private set; }
+		public GUIStyle HeaderBorderStyle { get; private set; }
+		public GUIStyle HeaderFoldoutStyle { get; private set; }
+		public GUIStyle HeaderBackgroundStyle { get; private set; }
+		public GUIStyle ButtonCloseStyle { get; private set; }
+		public GUIStyle SubEditorHeaderStyle { get; private set; }
+		public GUIStyle EditorSpacingStyle { get; private set; }
 
 		//***** COLORS *****
 
-		public Color[] LinkTextColors { get; private set; }
-		public Color[] SelectedLinkTextColors { get; private set; }
+		//none
 
 		//***** CONSTANTS *****
 
-		public readonly Color DisabledColorModifier = new Color(0.0f, 0.0f, 0.0f, 0.4f);
-		public const float LinkHeight = 16.0f;
-		public const float LinkViewTitleBarHeight = 18.0f;
-		public const bool ForceProSkin = false;
+		private const bool ForceProSkin = false;
 
 
 		public void InitGuiStyle()
@@ -61,69 +57,44 @@ namespace ImpRock.Cyoi.Editor
 				editorSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Scene);
 			else
 				editorSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector);
-			
-			LinkViewTitleStyle = new GUIStyle(editorSkin.GetStyle("ProjectBrowserTopBarBg"));
-			LinkViewTitleStyle.name = "Link View Title";
-			LinkViewTitleStyle.alignment = TextAnchor.MiddleLeft;
-			LinkViewTitleStyle.clipping = TextClipping.Clip;
-			LinkViewTitleStyle.padding.top = 0;
-			LinkViewTitleStyle.padding.bottom = 0;
-			LinkViewTitleStyle.padding.left = 32;
-			LinkViewTitleStyle.padding.right = 32;
-			LinkViewTitleStyle.contentOffset = new Vector2(0.0f, -1.0f);
-			LinkViewTitleStyle.font = null;
-			LinkViewTitleStyle.fontSize = 0;
-			LinkViewTitleStyle.imagePosition = ImagePosition.TextOnly;
-			LinkViewTitleStyle.normal.textColor = LinkTextColors[0];
 
-			LinkLabelStyle = new GUIStyle(editorSkin.GetStyle("PR Label"));
-			LinkLabelStyle.name = "Link Label Style";
-			LinkLabelStyle.padding.left = 8;
-			
-			FoldoutStyle = new GUIStyle(editorSkin.GetStyle("Foldout"));
+			MainBorderStyle = new GUIStyle(editorSkin.GetStyle("grey_border"));
+			MainBorderStyle.name = "MainBorder";
+			MainBorderStyle.margin = new RectOffset(4, 4, 4, 4);
+			MainBorderStyle.padding.bottom = 4;
 
-			DragDropInsertionStyle = new GUIStyle(editorSkin.GetStyle("PR Insertion"));
-			DragDropInsertionStyle.imagePosition = ImagePosition.ImageOnly;
-			DragDropInsertionStyle.contentOffset = new Vector2(0.0f, -16.0f);
+			MainBorderCollapsedStyle = new GUIStyle(MainBorderStyle);
+			MainBorderCollapsedStyle.name = "MainBorderCollapsed";
+			MainBorderCollapsedStyle.padding.bottom = 0;
+
+			HeaderBorderStyle = new GUIStyle(editorSkin.box);
+			HeaderBorderStyle.name = "HeaderBorder";
+			HeaderBorderStyle.margin = new RectOffset();
+
+			HeaderFoldoutStyle = new GUIStyle(editorSkin.GetStyle("IN Foldout"));
+			HeaderFoldoutStyle.name = "HeaderFoldout";
+			HeaderFoldoutStyle.fontSize = 12;
+			HeaderFoldoutStyle.fontStyle = FontStyle.Bold;
+
+			HeaderBackgroundStyle = new GUIStyle(editorSkin.GetStyle("IN BigTitle"));
+			HeaderBackgroundStyle.name = "HeaderBackground";
+			HeaderBackgroundStyle.padding.left = 1;
+			HeaderBackgroundStyle.padding.right = 1;
+
+			ButtonCloseStyle = new GUIStyle(editorSkin.GetStyle("WinBtnClose"));
+			ButtonCloseStyle.name = "ButtonClose";
+			ButtonCloseStyle.margin.top = 4;
+
+			SubEditorHeaderStyle = new GUIStyle(editorSkin.GetStyle("OL Title"));
+
+			EditorSpacingStyle = new GUIStyle();
+			EditorSpacingStyle.name = "EditorSpacing";
+			EditorSpacingStyle.padding = new RectOffset(1, 1, 0, 0);
 		}
 
 		public void InitAssets()
 		{
-			IconPrefabNormal = EditorGUIUtility.FindTexture("PrefabNormal Icon");
-			IconPrefabModel = EditorGUIUtility.FindTexture("PrefabModel Icon");
-			IconGameObject = EditorGUIUtility.FindTexture("GameObject Icon");
-			IconProjectView = EditorGUIUtility.FindTexture("Project");
-			IconHierarchyView = EditorGUIUtility.FindTexture("SceneAsset Icon");
-
-
-			if (EditorGUIUtility.isProSkin || ForceProSkin)
-			{
-				LinkTextColors = new Color[]
-				{
-					new Color(0.7f, 0.7f, 0.7f, 1.0f),		//normal
-					new Color(0.84f, 0.6f, 0.92f, 1.0f),	//model
-					new Color(0.298f, 0.5f, 0.85f, 1.0f),	//prefab
-					new Color(0.7f, 0.4f, 0.4f, 1.0f)		//broken prefab
-				};
-			}
-			else
-			{
-				LinkTextColors = new Color[]
-				{
-					Color.black,							//normal
-					new Color(0.6f, 0.0f, 0.8f, 1.0f),		//model
-					new Color(0.0f, 0.3f, 0.6f, 1.0f),		//prefab
-					new Color(0.4f, 0.0f, 0.0f, 1.0f)		//broken prefab
-				};											
-			}
-
-			SelectedLinkTextColors = new Color[]
-			{
-				Color.white,								//normal
-				new Color(0.92f, 0.8f, 1.0f, 1.0f),			//model
-				new Color(0.7f, 0.75f, 1.0f, 1.0f),			//prefab
-				new Color(1.0f, 0.7f, 0.7f, 1.0f)			//broken prefab
-			};												
+			//n/a											
 		}
 	}
 }

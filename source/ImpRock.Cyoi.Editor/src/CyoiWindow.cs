@@ -16,15 +16,6 @@ namespace ImpRock.Cyoi.Editor
 		private bool m_Initialized = false;
 		private double m_LastRepaintTime = 0.0;
 		
-		private GUIStyle m_MainBorderStyle = null;
-		private GUIStyle m_MainBorderCollapsedStyle = null;
-		private GUIStyle m_HeaderBorderStyle = null;
-		private GUIStyle m_HeaderFoldoutStyle = null;
-		private GUIStyle m_ButtonCloseStyle = null;
-		private GUIStyle m_SubEditorHeaderStyle = null;
-		private GUIStyle m_EditorSpacingStyle = null;
-
-
 		private const double ConstantRepaintFrameTime = 0.033333333333333;
 
 		
@@ -51,36 +42,7 @@ namespace ImpRock.Cyoi.Editor
 
 			m_Initialized = true;
 			
-			//TODO: distinguish between pro and "personal"
-			GUISkin editorSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector);
-
-			m_MainBorderStyle = new GUIStyle(editorSkin.GetStyle("grey_border"));
-			m_MainBorderStyle.name = "MainBorder";
-			m_MainBorderStyle.margin = new RectOffset(4, 4, 4, 4);
-			m_MainBorderStyle.padding.bottom = 4;
-
-			m_MainBorderCollapsedStyle = new GUIStyle(m_MainBorderStyle);
-			m_MainBorderCollapsedStyle.name = "MainBorderCollapsed";
-			m_MainBorderCollapsedStyle.padding.bottom = 0;
-
-			m_HeaderBorderStyle = new GUIStyle(editorSkin.box);
-			m_HeaderBorderStyle.name = "HeaderBorder";
-			m_HeaderBorderStyle.margin = new RectOffset();
-
-			m_HeaderFoldoutStyle = new GUIStyle(editorSkin.GetStyle("IN Foldout"));
-			m_HeaderFoldoutStyle.name = "HeaderFoldout";
-			m_HeaderFoldoutStyle.fontSize = 12;
-			m_HeaderFoldoutStyle.fontStyle = FontStyle.Bold;
-
-			m_ButtonCloseStyle = new GUIStyle(editorSkin.GetStyle("WinBtnClose"));
-			m_ButtonCloseStyle.name = "ButtonClose";
-			m_ButtonCloseStyle.margin.top = 4;
-
-			m_SubEditorHeaderStyle = new GUIStyle(editorSkin.GetStyle("OL Title"));
-
-			m_EditorSpacingStyle = new GUIStyle();
-			m_EditorSpacingStyle.name = "EditorSpacing";
-			m_EditorSpacingStyle.padding = new RectOffset(1, 1, 0, -3);
+			GraphicAssets.Instance.InitGuiStyle();
 		}
 
 		private void OnEnable()
@@ -106,31 +68,42 @@ namespace ImpRock.Cyoi.Editor
 
 			bool hasInvalid = false;
 
-			if (m_EditorContainers.Count == 0)
-				return;
-
 			m_ScrollPosition = GUILayout.BeginScrollView(m_ScrollPosition);
 			{
 				for (int i = 0; i < m_EditorContainers.Count; i++)
 				{
 					if (m_EditorContainers[i].IsValid())
 					{
-						GUILayout.BeginVertical(m_EditorContainers[i].FoldedOut ? m_MainBorderStyle : m_MainBorderCollapsedStyle, GUILayout.MinHeight(22.0f));
+						GUILayout.BeginVertical(m_EditorContainers[i].FoldedOut ? GraphicAssets.Instance.MainBorderStyle : GraphicAssets.Instance.MainBorderCollapsedStyle, GUILayout.MinHeight(22.0f));
 						{
-							if (!m_EditorContainers[i].OwnsSelf || !m_EditorContainers[i].FoldedOut)
+							GUILayout.BeginHorizontal(GraphicAssets.Instance.HeaderBorderStyle);
 							{
-								GUILayout.BeginHorizontal(m_HeaderBorderStyle);
-								{
-									m_EditorContainers[i].FoldedOut = EditorGUILayout.Foldout(m_EditorContainers[i].FoldedOut, m_EditorContainers[i].TitleContent, m_HeaderFoldoutStyle);
+								m_EditorContainers[i].RefreshTitle();
+								m_EditorContainers[i].FoldedOut = EditorGUILayout.Foldout(m_EditorContainers[i].FoldedOut, m_EditorContainers[i].TitleContent, GraphicAssets.Instance.HeaderFoldoutStyle);
 
-									GUILayout.FlexibleSpace();
-									if (GUILayout.Button(GUIContent.none, m_ButtonCloseStyle, GUILayout.Width(16.0f), GUILayout.Height(16.0f)))
-									{
-										m_EditorContainers[i].ForceInvalid = true;
-										hasInvalid = true;
-									}
+								GUILayout.FlexibleSpace();
+								if (GUILayout.Button(GUIContent.none, GraphicAssets.Instance.ButtonCloseStyle, GUILayout.Width(16.0f), GUILayout.Height(16.0f)))
+								{
+									m_EditorContainers[i].ForceInvalid = true;
+									hasInvalid = true;
 								}
-								GUILayout.EndHorizontal();
+							}
+							GUILayout.EndHorizontal();
+
+							if (!m_EditorContainers[i].OwnsSelf)
+							{
+								if (m_EditorContainers[i].MainEditor != null && m_EditorContainers[i].FoldedOut)
+								{
+									GUILayout.BeginVertical(GraphicAssets.Instance.EditorSpacingStyle);
+									{
+										m_EditorContainers[i].MainEditor.DrawHeader();
+									}
+									GUILayout.EndVertical();
+
+									//have to undo the damage from DrawHeader
+									EditorGUIUtility.fieldWidth = 0.0f;
+									EditorGUIUtility.labelWidth = 0.0f;
+								}
 							}
 
 							if (m_EditorContainers[i].FoldedOut)
@@ -143,7 +116,7 @@ namespace ImpRock.Cyoi.Editor
 										GUILayout.BeginHorizontal();
 										{
 											infos[j].FoldedOut = EditorGUILayout.InspectorTitlebar(infos[j].FoldedOut, infos[j].Editor.target);
-											if (GUILayout.Button(GUIContent.none, m_ButtonCloseStyle, GUILayout.Width(14.0f), GUILayout.Height(14.0f)))
+											if (GUILayout.Button(GUIContent.none, GraphicAssets.Instance.ButtonCloseStyle, GUILayout.Width(14.0f), GUILayout.Height(14.0f)))
 											{
 												infos[j].ForceInvalid = true;
 												hasInvalid = true;
@@ -159,21 +132,35 @@ namespace ImpRock.Cyoi.Editor
 								}
 								else
 								{
-									GUILayout.BeginVertical(m_EditorSpacingStyle);
-									{
-										EditorInfo info = m_EditorContainers[i].EditorInfos[0];
-										info.Editor.DrawHeader();
-										info.Editor.OnInspectorGUI();
+									EditorInfo info = m_EditorContainers[i].EditorInfos[0];
 
-										if (info.DrawSubEditor)
-										{
-											//TODO: should there be better text here?
-											GUILayout.Label("Imported Object", m_SubEditorHeaderStyle);
-											info.SubEditor.DrawHeader();
-											info.SubEditor.OnInspectorGUI();
-										}
+									GUILayout.BeginVertical(GraphicAssets.Instance.EditorSpacingStyle);
+									{
+										info.Editor.DrawHeader();
+										
+										EditorGUIUtility.fieldWidth = 0.0f;
+										EditorGUIUtility.labelWidth = 0.0f;
 									}
 									GUILayout.EndVertical();
+
+									info.Editor.OnInspectorGUI();
+									
+									if (info.DrawSubEditor)
+									{
+										GUILayout.BeginVertical(GraphicAssets.Instance.EditorSpacingStyle);
+										{
+											//TODO: should there be better text here?
+											GUILayout.Label("Imported Object", GraphicAssets.Instance.SubEditorHeaderStyle);
+											info.SubEditor.DrawHeader();
+
+											EditorGUIUtility.fieldWidth = 0.0f;
+											EditorGUIUtility.labelWidth = 0.0f;
+										}
+										GUILayout.EndVertical();
+
+										info.SubEditor.OnInspectorGUI();
+									}
+									
 								}
 
 								//TODO: draw optional preview?
