@@ -7,16 +7,12 @@ namespace ImpRock.Cyoi.Editor
 {
 	public sealed class CyoiWindow : EditorWindow
 	{
-		internal static int RequiresContantUpdateCounter = 0;
-
-
 		[SerializeField] private List<EditorContainer> m_EditorContainers = new List<EditorContainer>();
 		[SerializeField] private Vector2 m_ScrollPosition = Vector2.zero;
 
-		private bool m_Initialized = false;
-		private double m_LastRepaintTime = 0.0;
+		[System.NonSerialized] private bool m_Initialized = false;
 		
-		private const double ConstantRepaintFrameTime = 0.033333333333333;
+		private const double ConstantRepaintFrameTime = 0.03;
 
 		
 		public void AddEditorForTarget(Object target)
@@ -180,18 +176,10 @@ namespace ImpRock.Cyoi.Editor
 			{
 				CleanupEditorContainers();
 			}
-		}
 
-		private void Update()
-		{
-			if (CyoiWindow.RequiresContantUpdateCounter > 0
-				&& m_LastRepaintTime + ConstantRepaintFrameTime < EditorApplication.timeSinceStartup)
-			{
-				m_LastRepaintTime = EditorApplication.timeSinceStartup;
-				Repaint();
-			}
+			Repaint();
 		}
-
+		
 		private void CleanupEditorContainers()
 		{
 			foreach (EditorContainer container in m_EditorContainers)

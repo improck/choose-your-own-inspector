@@ -47,9 +47,6 @@ namespace ImpRock.Cyoi.Editor
 				EditorInfo editorInfo = new EditorInfo(editor);
 				m_EditorInfos.Add(editorInfo);
 
-				if (editorInfo.Editor.RequiresConstantRepaint())
-					CyoiWindow.RequiresContantUpdateCounter++;
-
 				if (m_Owner == target && editorInfo.Editor.target is AssetImporter)
 				{
 					m_TitleContent.text = editorInfo.EditorTitle;
@@ -82,9 +79,6 @@ namespace ImpRock.Cyoi.Editor
 					m_EditorInfos.RemoveAt(i);
 					if (editorInfo.Editor != null)
 					{
-						if (editorInfo.Editor.RequiresConstantRepaint())
-							CyoiWindow.RequiresContantUpdateCounter--;
-
 						Object.DestroyImmediate(editorInfo.Editor);
 					}
 				}
