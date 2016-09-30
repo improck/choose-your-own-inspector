@@ -75,8 +75,10 @@ namespace ImpRock.Cyoi.Editor
 							GUILayout.BeginHorizontal(GraphicAssets.Instance.HeaderBorderStyle);
 							{
 								m_EditorContainers[i].RefreshTitle();
-								m_EditorContainers[i].FoldedOut = EditorGUILayout.Foldout(m_EditorContainers[i].FoldedOut, m_EditorContainers[i].TitleContent, GraphicAssets.Instance.HeaderFoldoutStyle);
 
+								Rect foldoutRect = GUILayoutUtility.GetRect(16.0f, 18.0f);
+								m_EditorContainers[i].FoldedOut = EditorGUI.Foldout(foldoutRect, m_EditorContainers[i].FoldedOut, m_EditorContainers[i].TitleContent, GraphicAssets.Instance.HeaderFoldoutStyle);
+								
 								GUILayout.FlexibleSpace();
 								if (GUILayout.Button(GUIContent.none, GraphicAssets.Instance.ButtonCloseStyle, GUILayout.Width(16.0f), GUILayout.Height(16.0f)))
 								{

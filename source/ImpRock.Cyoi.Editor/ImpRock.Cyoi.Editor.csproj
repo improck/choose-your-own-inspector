@@ -39,8 +39,6 @@
     <Compile Include="src\EditorContainer.cs" />
     <Compile Include="src\EditorInfo.cs" />
     <Compile Include="src\Gui\GraphicAssets.cs" />
-    <Compile Include="src\Gui\GuiBase.cs" />
-    <Compile Include="src\Gui\RectRef.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

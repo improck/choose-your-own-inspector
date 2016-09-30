@@ -17,12 +17,13 @@ namespace ImpRock.Cyoi.Editor
 		[SerializeField] private bool m_ForceInvalid = false;
 		[SerializeField] private bool m_DrawSubEditor = false;
 		
+
 		public Editor Editor { get { return m_Editor; } }
 		public Editor SubEditor { get { return m_SubEditor; } }
 		public bool FoldedOut { get { return m_FoldedOut; } set { m_FoldedOut = value; } }
 		public bool ForceInvalid { get { return m_ForceInvalid; } set { m_ForceInvalid = value; } }
 		public bool DrawSubEditor { get { return m_DrawSubEditor; } }
-
+		
 		public string EditorTitle
 		{
 			get
@@ -69,6 +70,28 @@ namespace ImpRock.Cyoi.Editor
 		public bool IsValid()
 		{
 			return !m_ForceInvalid && m_Editor != null && m_Editor.target != null;
+		}
+
+		public void SetInspectorMode(InspectorMode inspectorMode)
+		{
+			m_Editor.GetType()
+				.GetField("m_InspectorMode", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+				.SetValue(m_Editor, inspectorMode);
+
+			m_Editor.serializedObject.GetType()
+				.GetProperty("inspectorMode", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+				.SetValue(m_Editor.serializedObject, inspectorMode, null);
+
+			if (m_SubEditor != null)
+			{
+				m_SubEditor.GetType()
+					.GetField("m_InspectorMode", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+					.SetValue(m_SubEditor, inspectorMode);
+
+				m_SubEditor.serializedObject.GetType()
+					.GetProperty("inspectorMode", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+					.SetValue(m_SubEditor.serializedObject, inspectorMode, null);
+			}
 		}
 	}
 }
