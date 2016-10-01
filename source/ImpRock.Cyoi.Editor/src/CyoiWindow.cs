@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 using System.Collections.Generic;
 
 
@@ -7,10 +8,14 @@ namespace ImpRock.Cyoi.Editor
 {
 	public sealed class CyoiWindow : EditorWindow
 	{
+		internal static int RequiresContantUpdateCounter = 0;
+
+
 		[SerializeField] private List<EditorContainer> m_EditorContainers = new List<EditorContainer>();
 		[SerializeField] private Vector2 m_ScrollPosition = Vector2.zero;
 
 		[System.NonSerialized] private bool m_Initialized = false;
+		private double m_LastRepaintTime = 0.0;
 		
 		private const double ConstantRepaintFrameTime = 0.03;
 
@@ -28,7 +33,18 @@ namespace ImpRock.Cyoi.Editor
 				m_EditorContainers.Add(container);
 			}
 
-			container.AddEditorForTarget(target);
+			EditorInfo editorInfo = container.AddEditorForTarget(target);
+			if (editorInfo != null)
+			{
+				editorInfo.Window = this;
+
+				List<UnityEvent> repaintableEvents = editorInfo.GetRepaintableEvents();
+				for (int i = 0; i < repaintableEvents.Count; i++)
+				{
+					Debug.Log("adding repaint as a listener for " + editorInfo.EditorTitle);
+					repaintableEvents[i].AddListener(Repaint);
+				}
+			}
 		}
 		
 		private void Initialize()
@@ -43,17 +59,52 @@ namespace ImpRock.Cyoi.Editor
 
 		private void OnEnable()
 		{
-			titleContent.text = "CYOI";
+			CyoiResources.Instance.LoadResources();
+
+			titleContent = new GUIContent("CYOI", CyoiResources.Instance.GetImage(ResId.ImageTabIcon));
 			Vector2 min = minSize;
 			min.x = 280.0f;
 			minSize = min;
 
 			EditorApplication.hierarchyWindowChanged += CleanupEditorContainers;
 			EditorApplication.projectWindowChanged += CleanupEditorContainers;
+
+			if (m_EditorContainers.Count > 0)
+			{
+				foreach (EditorContainer container in m_EditorContainers)
+				{
+					if (container == null || !container.IsValid())
+						continue;
+
+					foreach (EditorInfo info in container.EditorInfos)
+					{
+						info.Window = this;
+					}
+				}
+			}
 		}
 
 		private void OnDisable()
 		{
+			if (m_EditorContainers.Count > 0)
+			{
+				foreach (EditorContainer container in m_EditorContainers)
+				{
+					if (container == null || !container.IsValid())
+						continue;
+
+					foreach (EditorInfo info in container.EditorInfos)
+					{
+						List<UnityEvent> repaintableEvents = info.GetRepaintableEvents();
+						for (int i = 0; i < repaintableEvents.Count; i++)
+						{
+							Debug.Log("removing repaint as a listener for " + info.EditorTitle);
+							repaintableEvents[i].RemoveListener(Repaint);
+						}
+					}
+				}
+			}
+
 			EditorApplication.hierarchyWindowChanged -= CleanupEditorContainers;
 			EditorApplication.projectWindowChanged -= CleanupEditorContainers;
 		}
@@ -178,10 +229,18 @@ namespace ImpRock.Cyoi.Editor
 			{
 				CleanupEditorContainers();
 			}
-
-			Repaint();
 		}
-		
+
+		private void Update()
+		{
+			if (CyoiWindow.RequiresContantUpdateCounter > 0
+				&& m_LastRepaintTime + ConstantRepaintFrameTime < EditorApplication.timeSinceStartup)
+			{
+				m_LastRepaintTime = EditorApplication.timeSinceStartup;
+				Repaint();
+			}
+		}
+
 		private void CleanupEditorContainers()
 		{
 			foreach (EditorContainer container in m_EditorContainers)

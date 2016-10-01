@@ -46,21 +46,27 @@ namespace ImpRock.Cyoi.Editor
 			}
 		}
 
-		public void AddEditorForTarget(Object target)
+		public EditorInfo AddEditorForTarget(Object target)
 		{
-			if (!m_EditorInfos.Exists(e => e.Editor.target == target))
+			EditorInfo editorInfo = m_EditorInfos.Find(e => e.Editor.target == target);
+			if (editorInfo == null)
 			{
 				Editor editor = Editor.CreateEditor(target);
-				EditorInfo editorInfo = new EditorInfo(editor);
+				editorInfo = new EditorInfo(editor);
 				m_EditorInfos.Add(editorInfo);
+
+				if (editorInfo.Editor.RequiresConstantRepaint())
+					CyoiWindow.RequiresContantUpdateCounter++;
 
 				if (m_Owner == target && editorInfo.Editor.target is AssetImporter)
 				{
 					m_TitleContent.text = editorInfo.EditorTitle;
 				}
 
-				//Debug.Log(target.GetType() + " -> " + editor.GetType());
+				return editorInfo;
 			}
+
+			return null;
 		}
 
 		public void RefreshTitle()
@@ -87,6 +93,9 @@ namespace ImpRock.Cyoi.Editor
 					m_EditorInfos.RemoveAt(i);
 					if (editorInfo.Editor != null)
 					{
+						if (editorInfo.Editor.RequiresConstantRepaint())
+							CyoiWindow.RequiresContantUpdateCounter--;
+
 						Object.DestroyImmediate(editorInfo.Editor);
 					}
 				}

@@ -47,7 +47,7 @@ namespace ImpRock.Cyoi.Editor
 
 		//***** CONSTANTS *****
 
-		private const bool ForceProSkin = false;
+		public const bool ForceProSkin = false;
 
 
 		public void InitGuiStyle()

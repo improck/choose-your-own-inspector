@@ -35,6 +35,7 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="src\CyoiResources.cs" />
     <Compile Include="src\CyoiWindow.cs" />
     <Compile Include="src\EditorContainer.cs" />
     <Compile Include="src\EditorInfo.cs" />
@@ -49,6 +50,11 @@
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity53\Editor\Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="res\image\tabicon.png" />
+    <EmbeddedResource Include="res\image\tabicon_pro.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
