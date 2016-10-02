@@ -44,6 +44,11 @@ namespace ImpRock.Cyoi.Editor
 		{
 			m_Editor = editor;
 
+			if (m_Editor.RequiresConstantRepaint())
+			{
+				CyoiWindow.RequiresContantUpdateCounter++;
+			}
+
 			System.Type editorType = m_Editor.GetType();
 
 			if (m_Editor.target is Material)
@@ -195,7 +200,31 @@ namespace ImpRock.Cyoi.Editor
 
 		public void Cleanup()
 		{
+			List<UnityEvent> repaintableEvents = GetRepaintableEvents();
+			for (int i = 0; i < repaintableEvents.Count; i++)
+			{
+				Debug.Log("removing repaint as a listener for " + EditorTitle);
+				repaintableEvents[i].RemoveListener(Window.Repaint);
+			}
+			
+			if (m_SubEditor != null)
+			{
+				Object.DestroyImmediate(m_SubEditor);
+				m_SubEditor = null;
+			}
 
+			if (m_Editor != null)
+			{
+				if (m_Editor.RequiresConstantRepaint())
+				{
+					CyoiWindow.RequiresContantUpdateCounter--;
+				}
+
+				Object.DestroyImmediate(m_Editor);
+				m_Editor = null;
+			}
+
+			Window = null;
 		}
 
 		public void OnBeforeSerialize()
@@ -235,7 +264,6 @@ namespace ImpRock.Cyoi.Editor
 					List<UnityEvent> repaintableEvents = GetRepaintableEvents();
 					for (int i = 0; i < repaintableEvents.Count; i++)
 					{
-						Debug.Log("REadding repaint as a listener for " + EditorTitle);
 						repaintableEvents[i].AddListener(Window.Repaint);
 					}
 				};

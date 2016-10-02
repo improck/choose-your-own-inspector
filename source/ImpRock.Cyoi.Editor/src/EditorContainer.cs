@@ -90,15 +90,17 @@ namespace ImpRock.Cyoi.Editor
 				EditorInfo editorInfo = m_EditorInfos[i];
 				if (!editorInfo.IsValid())
 				{
+					editorInfo.Cleanup();
 					m_EditorInfos.RemoveAt(i);
-					if (editorInfo.Editor != null)
-					{
-						if (editorInfo.Editor.RequiresConstantRepaint())
-							CyoiWindow.RequiresContantUpdateCounter--;
-
-						Object.DestroyImmediate(editorInfo.Editor);
-					}
 				}
+			}
+		}
+
+		public void Cleanup()
+		{
+			for (int i = 0; i < m_EditorInfos.Count; i++)
+			{
+				m_EditorInfos[i].Cleanup();
 			}
 		}
 

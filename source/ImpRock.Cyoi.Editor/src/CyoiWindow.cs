@@ -245,7 +245,10 @@ namespace ImpRock.Cyoi.Editor
 		{
 			foreach (EditorContainer container in m_EditorContainers)
 			{
-				container.RemoveInvalidEditors();
+				if (container.IsValid())
+					container.RemoveInvalidEditors();
+				else
+					container.Cleanup();
 			}
 
 			m_EditorContainers.RemoveAll(c => !c.IsValid());

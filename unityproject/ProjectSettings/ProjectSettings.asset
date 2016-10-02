@@ -12,7 +12,7 @@ PlayerSettings:
   companyName: DefaultCompany
   productName: unityproject
   defaultCursor: {fileID: 0}
-  cursorHotspot: {x: 0, y: 0}
+  cursorHotspot: {x: -0.96, y: 0}
   m_ShowUnitySplashScreen: 1
   m_VirtualRealitySplashScreen: {fileID: 0}
   defaultScreenWidth: 1024
