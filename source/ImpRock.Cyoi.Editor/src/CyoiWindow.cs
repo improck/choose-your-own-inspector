@@ -69,9 +69,12 @@ namespace ImpRock.Cyoi.Editor
 			CyoiResources.Instance.LoadResources();
 
 			titleContent = new GUIContent("CYOI", CyoiResources.Instance.GetImage(ResId.ImageTabIcon));
+
 			Vector2 min = minSize;
 			min.x = 280.0f;
 			minSize = min;
+
+			autoRepaintOnSceneChange = true;
 
 			EditorApplication.hierarchyWindowChanged += CleanupEditorContainers;
 			EditorApplication.projectWindowChanged += CleanupEditorContainers;
@@ -254,6 +257,11 @@ namespace ImpRock.Cyoi.Editor
 			if (EditorApplication.isPlayingOrWillChangePlaymode)
 			{
 				TimedRepaint();
+				autoRepaintOnSceneChange = false;
+			}
+			else
+			{
+				autoRepaintOnSceneChange = true;
 			}
 		}
 

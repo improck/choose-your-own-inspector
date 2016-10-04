@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("ImpRock.Cyoi.Editor")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Build a custom list of editors in a non-Inspector window")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ImpRock")]
 [assembly: AssemblyProduct("Choose Your Own Inspector")]
