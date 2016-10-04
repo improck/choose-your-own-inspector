@@ -17,7 +17,7 @@ namespace ImpRock.Cyoi.Editor
 		[System.NonSerialized] private bool m_Initialized = false;
 		private double m_LastRepaintTime = 0.0;
 		
-		private const double ConstantRepaintFrameTime = 0.03;
+		private const double ConstantRepaintFrameTime = 0.0328;
 
 		
 		public void AddEditorForTarget(Object target)
@@ -41,9 +41,16 @@ namespace ImpRock.Cyoi.Editor
 				List<UnityEvent> repaintableEvents = editorInfo.GetRepaintableEvents();
 				for (int i = 0; i < repaintableEvents.Count; i++)
 				{
-					Debug.Log("adding repaint as a listener for " + editorInfo.EditorTitle);
-					repaintableEvents[i].AddListener(Repaint);
+					repaintableEvents[i].AddListener(ManualRepaint);
 				}
+			}
+		}
+
+		internal void ManualRepaint()
+		{
+			if (!EditorApplication.isPlaying)
+			{
+				TimedRepaint();
 			}
 		}
 		
@@ -68,6 +75,7 @@ namespace ImpRock.Cyoi.Editor
 
 			EditorApplication.hierarchyWindowChanged += CleanupEditorContainers;
 			EditorApplication.projectWindowChanged += CleanupEditorContainers;
+			EditorApplication.playmodeStateChanged += OnPlayModeStateChanged;
 
 			if (m_EditorContainers.Count > 0)
 			{
@@ -98,8 +106,7 @@ namespace ImpRock.Cyoi.Editor
 						List<UnityEvent> repaintableEvents = info.GetRepaintableEvents();
 						for (int i = 0; i < repaintableEvents.Count; i++)
 						{
-							Debug.Log("removing repaint as a listener for " + info.EditorTitle);
-							repaintableEvents[i].RemoveListener(Repaint);
+							repaintableEvents[i].RemoveListener(ManualRepaint);
 						}
 					}
 				}
@@ -107,6 +114,7 @@ namespace ImpRock.Cyoi.Editor
 
 			EditorApplication.hierarchyWindowChanged -= CleanupEditorContainers;
 			EditorApplication.projectWindowChanged -= CleanupEditorContainers;
+			EditorApplication.playmodeStateChanged -= OnPlayModeStateChanged;
 		}
 		
 		private void OnGUI()
@@ -233,11 +241,19 @@ namespace ImpRock.Cyoi.Editor
 
 		private void Update()
 		{
-			if (CyoiWindow.RequiresContantUpdateCounter > 0
+			if ((EditorApplication.isPlaying ||
+				CyoiWindow.RequiresContantUpdateCounter > 0)
 				&& m_LastRepaintTime + ConstantRepaintFrameTime < EditorApplication.timeSinceStartup)
 			{
-				m_LastRepaintTime = EditorApplication.timeSinceStartup;
-				Repaint();
+				TimedRepaint();
+			}
+		}
+
+		private void OnPlayModeStateChanged()
+		{
+			if (EditorApplication.isPlayingOrWillChangePlaymode)
+			{
+				TimedRepaint();
 			}
 		}
 
@@ -253,6 +269,12 @@ namespace ImpRock.Cyoi.Editor
 
 			m_EditorContainers.RemoveAll(c => !c.IsValid());
 
+			TimedRepaint();
+		}
+
+		private void TimedRepaint()
+		{
+			m_LastRepaintTime = EditorApplication.timeSinceStartup;
 			Repaint();
 		}
 

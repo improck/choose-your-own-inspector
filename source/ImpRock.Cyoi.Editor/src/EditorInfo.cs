@@ -203,8 +203,7 @@ namespace ImpRock.Cyoi.Editor
 			List<UnityEvent> repaintableEvents = GetRepaintableEvents();
 			for (int i = 0; i < repaintableEvents.Count; i++)
 			{
-				Debug.Log("removing repaint as a listener for " + EditorTitle);
-				repaintableEvents[i].RemoveListener(Window.Repaint);
+				repaintableEvents[i].RemoveListener(Window.ManualRepaint);
 			}
 			
 			if (m_SubEditor != null)
@@ -232,8 +231,7 @@ namespace ImpRock.Cyoi.Editor
 			List<UnityEvent> repaintableEvents = GetRepaintableEvents();
 			for (int i = 0; i < repaintableEvents.Count; i++)
 			{
-				Debug.Log("removing repaint as a listener for " + EditorTitle);
-				repaintableEvents[i].RemoveListener(Window.Repaint);
+				repaintableEvents[i].RemoveListener(Window.ManualRepaint);
 			}
 		}
 
@@ -264,7 +262,7 @@ namespace ImpRock.Cyoi.Editor
 					List<UnityEvent> repaintableEvents = GetRepaintableEvents();
 					for (int i = 0; i < repaintableEvents.Count; i++)
 					{
-						repaintableEvents[i].AddListener(Window.Repaint);
+						repaintableEvents[i].AddListener(Window.ManualRepaint);
 					}
 				};
 		}
