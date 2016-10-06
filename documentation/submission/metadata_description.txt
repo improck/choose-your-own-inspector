@@ -1,0 +1,11 @@
+<strong>Choose Your Own Inspector</strong> (CYOI) lets you pop out individual Object and asset editors to a window to keep them at hand while continuing to work as needed. Keep open the editors that you need most frequently. Those editors will stay in the CYOI window until you're done with them. Open multiple editors from multiple objects and assets, and have them all in the same window, conveniently within reach! Build it however you like!<br><br>
+
+Handles built-in editors, custom editors, material editors, ShaderGUIs, property drawers, property attribute drawers, and material property drawers.<br><br>
+
+Imagine this: You're making a game where the enemies in each level get tougher as the player progresses. With CYOI you can open each enemy's health script in order, tweak their values, play through a level, and repeat until it feels right. You'll be able to see all the numbers at the same time rather than one at a time, as you would have to do with just the Inspector alone.<br><br>
+
+It's also very nice to have when creating a UI. You can add the Transforms of several UI objects to make positioning them much easier without selecting and reselecting. Add their Image and Text components to get the color palette just right.<br><br>
+
+Choose Your Own Inspector can increase the value of your development time! What kind of Inspector will <i>you</i> choose?<br><br>
+
+Don't forget to visit <a href="http://www.improck.com/cyoi">improck.com</a>.<br><br>
