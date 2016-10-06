@@ -6,6 +6,6 @@ Imagine this: You're making a game where the enemies in each level get tougher a
 
 It's also very nice to have when creating a UI. You can add the Transforms of several UI objects to make positioning them much easier without selecting and reselecting. Add their Image and Text components to get the color palette just right.<br><br>
 
-Choose Your Own Inspector can increase the value of your development time! What kind of Inspector will <i>you</i> choose?<br><br>
+Make your development time more valuable! What kind of Inspector will <i>you</i> choose?<br><br>
 
 Don't forget to visit <a href="http://www.improck.com/cyoi">improck.com</a>.<br><br>
