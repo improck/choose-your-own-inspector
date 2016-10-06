@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using System.Reflection;
 
 
 namespace ImpRock.Cyoi.Editor
@@ -16,7 +17,9 @@ namespace ImpRock.Cyoi.Editor
 
 		[System.NonSerialized] private bool m_Initialized = false;
 		private double m_LastRepaintTime = 0.0;
-		
+		private EditorWindowTitleContentWrapper m_TitleContentWrapper = null;
+		private Texture2D m_TabIcon = null;
+
 		private const double ConstantRepaintFrameTime = 0.0328;
 
 		
@@ -68,7 +71,11 @@ namespace ImpRock.Cyoi.Editor
 		{
 			CyoiResources.Instance.LoadResources();
 
-			titleContent = new GUIContent("CYOI", CyoiResources.Instance.GetImage(ResId.ImageTabIcon));
+			m_TabIcon = CyoiResources.Instance.GetImage(ResId.ImageTabIcon);
+			titleContent = new GUIContent("CYOI", m_TabIcon);
+			//TODO: for support for Unity 4.6
+			//m_TitleContentWrapper = new EditorWindowTitleContentWrapper(this);
+			//m_TitleContentWrapper.TitleContent = new GUIContent("CYOI", m_TabIcon);
 
 			Vector2 min = minSize;
 			min.x = 280.0f;
@@ -122,6 +129,11 @@ namespace ImpRock.Cyoi.Editor
 		
 		private void OnGUI()
 		{
+			//TODO: for support for Unity 4.6
+			//GUIContent titleContent = m_TitleContentWrapper.TitleContent;
+			//titleContent.text = "CYOI";
+			//titleContent.image = m_TabIcon;
+
 			Initialize();
 
 			bool hasInvalid = false;
@@ -310,5 +322,50 @@ namespace ImpRock.Cyoi.Editor
 
 			window.Show();
 		}
+	}
+
+
+	public class EditorWindowTitleContentWrapper
+	{
+		private EditorWindow m_Window = null;
+		private PropertyInfo m_TitleContentProperty = null;
+
+
+		public GUIContent TitleContent
+		{
+			get
+			{
+				GUIContent content = m_TitleContentProperty.GetValue(m_Window, null) as GUIContent;
+				if (content == null)
+				{
+					content = new GUIContent();
+					m_TitleContentProperty.SetValue(m_Window, content, null);
+				}
+
+				return content;
+			}
+
+			set
+			{
+				m_TitleContentProperty.SetValue(m_Window, value, null);
+			}
+		}
+
+
+		//public EditorWindowTitleContentWrapper(EditorWindow window)
+		//{
+		//	m_Window = window;
+
+		//	//for Unity 4.6
+		//	m_TitleContentProperty =
+		//		window.GetType().GetProperty("cachedTitleContent", BindingFlags.Instance | BindingFlags.NonPublic);
+
+		//	//for Unity 5
+		//	if (m_TitleContentProperty == null)
+		//	{
+		//		m_TitleContentProperty =
+		//		window.GetType().GetProperty("titleContent", BindingFlags.Instance | BindingFlags.Public);
+		//	}
+		//}
 	}
 }
