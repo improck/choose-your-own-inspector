@@ -5,6 +5,7 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 using System.Reflection;
 using System.Collections.Generic;
+using UnityEditor.Experimental.AssetImporters;
 
 
 namespace ImpRock.Cyoi.Editor
@@ -46,16 +47,19 @@ namespace ImpRock.Cyoi.Editor
 
 			if (m_Editor.RequiresConstantRepaint())
 			{
-				CyoiWindow.RequiresContantUpdateCounter++;
+				CyoiWindow.RequiresConstantUpdateCounter++;
 			}
 
 			System.Type editorType = m_Editor.GetType();
 
 			if (m_Editor.target is Material)
 			{
-				editorType
-					.GetProperty("forceVisible", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-					.SetValue(m_Editor, true, null);
+				FieldInfo isVisible = editorType.GetField("m_IsVisible", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+				if (isVisible != null)
+				{
+					isVisible.SetValue(m_Editor, true);
+					UnityEditorInternal.InternalEditorUtility.SetIsInspectorExpanded(m_Editor.target, true);
+				}
 			}
 			else if (m_Editor.target is AssetImporter)
 			{
@@ -63,15 +67,18 @@ namespace ImpRock.Cyoi.Editor
 				Object imported = AssetDatabase.LoadAssetAtPath(importer.assetPath, typeof(Object));
 				if (imported != null)
 				{
-					//TODO: assetEditor value may not get serialized by the AssetImporter
 					m_SubEditor = Editor.CreateEditor(imported);
-					editorType
-						.GetProperty("assetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-						.SetValue(m_Editor, m_SubEditor, null);
-
-					m_DrawSubEditor = (bool)editorType
-						.GetProperty("showImportedObject", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-						.GetValue(m_Editor, null);
+					//TODO: for some reason, it's not finding this field...or any field!
+					//editorType
+					//	.GetField("m_AssetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+					//	.SetValue(m_Editor, m_SubEditor);
+					MethodInfo setImportEditor = editorType.GetMethod("InternalSetAssetImporterTargetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+					if (setImportEditor != null)
+					{
+						setImportEditor?.Invoke(m_Editor, new object[] { m_SubEditor });
+					}
+					
+					m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 				}
 			}
 		}
@@ -216,7 +223,7 @@ namespace ImpRock.Cyoi.Editor
 			{
 				if (m_Editor.RequiresConstantRepaint())
 				{
-					CyoiWindow.RequiresContantUpdateCounter--;
+					CyoiWindow.RequiresConstantUpdateCounter--;
 				}
 
 				Object.DestroyImmediate(m_Editor);
@@ -248,13 +255,13 @@ namespace ImpRock.Cyoi.Editor
 						Object imported = AssetDatabase.LoadAssetAtPath(importer.assetPath, typeof(Object));
 						if (imported != null)
 						{
-							editorType
-								.GetProperty("assetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-								.SetValue(m_Editor, m_SubEditor, null);
+							MethodInfo setImportEditor = editorType.GetMethod("InternalSetAssetImporterTargetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+							if (setImportEditor != null)
+							{
+								setImportEditor?.Invoke(m_Editor, new object[] { m_SubEditor });
+							}
 
-							m_DrawSubEditor = (bool)editorType
-								.GetProperty("showImportedObject", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-								.GetValue(m_Editor, null);
+							m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 						}
 					}
 

@@ -9,7 +9,7 @@ namespace ImpRock.Cyoi.Editor
 {
 	public sealed class CyoiWindow : EditorWindow
 	{
-		internal static int RequiresContantUpdateCounter = 0;
+		internal static int RequiresConstantUpdateCounter = 0;
 
 
 		[SerializeField] private List<EditorContainer> m_EditorContainers = new List<EditorContainer>();
@@ -248,7 +248,7 @@ namespace ImpRock.Cyoi.Editor
 		private void Update()
 		{
 			if ((EditorApplication.isPlaying ||
-				CyoiWindow.RequiresContantUpdateCounter > 0)
+				CyoiWindow.RequiresConstantUpdateCounter > 0)
 				&& m_LastRepaintTime + ConstantRepaintFrameTime < EditorApplication.timeSinceStartup)
 			{
 				TimedRepaint();

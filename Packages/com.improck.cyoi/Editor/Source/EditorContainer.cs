@@ -56,7 +56,7 @@ namespace ImpRock.Cyoi.Editor
 				m_EditorInfos.Add(editorInfo);
 
 				if (editorInfo.Editor.RequiresConstantRepaint())
-					CyoiWindow.RequiresContantUpdateCounter++;
+					CyoiWindow.RequiresConstantUpdateCounter++;
 
 				if (m_Owner == target && editorInfo.Editor.target is AssetImporter)
 				{
