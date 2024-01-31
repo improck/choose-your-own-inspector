@@ -67,18 +67,13 @@ namespace ImpRock.Cyoi.Editor
 				Object imported = AssetDatabase.LoadAssetAtPath(importer.assetPath, typeof(Object));
 				if (imported != null)
 				{
-					m_SubEditor = Editor.CreateEditor(imported);
-					//TODO: for some reason, it's not finding this field...or any field!
-					//editorType
-					//	.GetField("m_AssetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
-					//	.SetValue(m_Editor, m_SubEditor);
 					MethodInfo setImportEditor = editorType.GetMethod("InternalSetAssetImporterTargetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 					if (setImportEditor != null)
 					{
+						m_SubEditor = Editor.CreateEditor(imported);
 						setImportEditor?.Invoke(m_Editor, new object[] { m_SubEditor });
+						m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 					}
-					
-					m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 				}
 			}
 		}
@@ -259,9 +254,8 @@ namespace ImpRock.Cyoi.Editor
 							if (setImportEditor != null)
 							{
 								setImportEditor?.Invoke(m_Editor, new object[] { m_SubEditor });
+								m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 							}
-
-							m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 						}
 					}
 
