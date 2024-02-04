@@ -1,7 +1,7 @@
-﻿using UnityEditor;
-using UnityEngine;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 
 namespace ImpRock.Cyoi.Editor

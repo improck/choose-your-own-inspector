@@ -1,13 +1,12 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
-using System.Collections.Generic;
-using System.Reflection;
 
 
 namespace ImpRock.Cyoi.Editor
 {
-	public sealed class CyoiWindow : EditorWindow
+	public sealed class CyoiWindow : EditorWindow, ISerializationCallbackReceiver
 	{
 		internal static int RequiresConstantUpdateCounter = 0;
 
@@ -18,6 +17,7 @@ namespace ImpRock.Cyoi.Editor
 		[System.NonSerialized] private bool m_Initialized = false;
 		private double m_LastRepaintTime = 0.0;
 		private Texture2D m_TabIcon = null;
+		private bool m_EditorWantsToQuit = false;
 
 		private const double ConstantRepaintFrameTime = 0.0328;
 
@@ -62,8 +62,13 @@ namespace ImpRock.Cyoi.Editor
 				return;
 
 			m_Initialized = true;
-			
+
 			GraphicAssets.Instance.InitGuiStyle();
+		}
+
+		public void OnAfterDeserialize()
+		{
+			//do nothing
 		}
 
 		private void OnEnable()
@@ -82,6 +87,7 @@ namespace ImpRock.Cyoi.Editor
 			EditorApplication.hierarchyChanged += CleanupEditorContainers;
 			EditorApplication.projectChanged += CleanupEditorContainers;
 			EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+			EditorApplication.wantsToQuit += EditorWantsToQuitHandler;
 
 			if (m_EditorContainers.Count > 0)
 			{
@@ -95,6 +101,14 @@ namespace ImpRock.Cyoi.Editor
 						info.Window = this;
 					}
 				}
+			}
+		}
+
+		public void OnBeforeSerialize()
+		{
+			if (m_EditorWantsToQuit)
+			{
+				m_EditorContainers.Clear();
 			}
 		}
 
@@ -121,8 +135,14 @@ namespace ImpRock.Cyoi.Editor
 			EditorApplication.hierarchyChanged -= CleanupEditorContainers;
 			EditorApplication.projectChanged -= CleanupEditorContainers;
 			EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
+			EditorApplication.wantsToQuit -= EditorWantsToQuitHandler;
 		}
-		
+
+		private void OnDestroy()
+		{
+			EditorApplication.wantsToQuit -= EditorWantsToQuitHandler;
+		}
+
 		private void OnGUI()
 		{
 			Initialize();
@@ -266,6 +286,12 @@ namespace ImpRock.Cyoi.Editor
 			{
 				autoRepaintOnSceneChange = true;
 			}
+		}
+
+		private bool EditorWantsToQuitHandler()
+		{
+			m_EditorWantsToQuit = true;
+			return true;
 		}
 
 		private void CleanupEditorContainers()

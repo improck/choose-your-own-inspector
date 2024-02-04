@@ -1,11 +1,10 @@
-﻿using UnityEditor;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using UnityEditor;
 using UnityEditor.AnimatedValues;
+using UnityEditor.Experimental.AssetImporters;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
-using System.Reflection;
-using System.Collections.Generic;
-using UnityEditor.Experimental.AssetImporters;
 
 
 namespace ImpRock.Cyoi.Editor
@@ -54,12 +53,16 @@ namespace ImpRock.Cyoi.Editor
 
 			if (m_Editor.target is Material)
 			{
+#if UNITY_2019_1_OR_NEWER
+				UnityEditorInternal.InternalEditorUtility.SetIsInspectorExpanded(m_Editor.target, true);
+#else
 				FieldInfo isVisible = editorType.GetField("m_IsVisible", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 				if (isVisible != null)
 				{
 					isVisible.SetValue(m_Editor, true);
 					UnityEditorInternal.InternalEditorUtility.SetIsInspectorExpanded(m_Editor.target, true);
 				}
+#endif
 			}
 			else if (m_Editor.target is AssetImporter)
 			{
@@ -86,6 +89,9 @@ namespace ImpRock.Cyoi.Editor
 		public List<UnityEvent> GetRepaintableEvents()
 		{
 			List<UnityEvent> unityEvents = new List<UnityEvent>();
+
+			if (m_Editor == null)
+				return unityEvents;
 
 			//TODO: find fields and properties of type Anim* and subscribe repaints to them
 			//NOTE: this assumes that all initialization has happened already, such as OnEnable()
@@ -242,6 +248,9 @@ namespace ImpRock.Cyoi.Editor
 			EditorApplication.delayCall +=
 				delegate()
 				{
+					if (m_Editor == null)
+						return;
+
 					if (m_Editor.target is AssetImporter && m_SubEditor != null)
 					{
 						System.Type editorType = m_Editor.GetType();
