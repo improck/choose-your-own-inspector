@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace ImpRock.Cyoi.Editor
+namespace ImpRock.Cyoi
 {
 	internal static class ResId
 	{

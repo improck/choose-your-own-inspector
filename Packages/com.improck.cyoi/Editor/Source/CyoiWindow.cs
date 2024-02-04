@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-namespace ImpRock.Cyoi.Editor
+namespace ImpRock.Cyoi
 {
 	public sealed class CyoiWindow : EditorWindow, ISerializationCallbackReceiver
 	{

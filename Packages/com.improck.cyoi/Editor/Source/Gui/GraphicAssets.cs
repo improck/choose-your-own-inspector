@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace ImpRock.Cyoi.Editor
+namespace ImpRock.Cyoi
 {
 	internal sealed class GraphicAssets
 	{

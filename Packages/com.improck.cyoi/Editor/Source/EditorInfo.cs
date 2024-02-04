@@ -7,11 +7,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 
-namespace ImpRock.Cyoi.Editor
+namespace ImpRock.Cyoi
 {
-	using Editor = UnityEditor.Editor;
-
-
 	[System.Serializable]
 	public class EditorInfo : ISerializationCallbackReceiver
 	{	
