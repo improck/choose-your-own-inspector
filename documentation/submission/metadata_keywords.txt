@@ -1,1 +1,0 @@
-editor, inspector, gameobject, prefab, importer
