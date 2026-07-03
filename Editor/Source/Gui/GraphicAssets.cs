@@ -59,21 +59,17 @@ namespace ImpRock.Cyoi
 				editorSkin = EditorGUIUtility.GetBuiltinSkin(EditorSkin.Inspector);
 
 			MainBorderStyle = new GUIStyle(editorSkin.GetStyle("grey_border"));
-			MainBorderStyle.name = "MainBorder";
 			MainBorderStyle.margin = new RectOffset(4, 4, 4, 4);
 			MainBorderStyle.padding.bottom = 4;
 
 			MainBorderCollapsedStyle = new GUIStyle(MainBorderStyle);
-			MainBorderCollapsedStyle.name = "MainBorderCollapsed";
 			MainBorderCollapsedStyle.padding.bottom = 0;
 
 			HeaderBorderStyle = new GUIStyle(editorSkin.GetStyle("IN BigTitle"));
-			HeaderBorderStyle.name = "HeaderBorder";
 			HeaderBorderStyle.margin = new RectOffset(1, 1, 0, 0);
 			HeaderBorderStyle.padding = new RectOffset(3, 3, 3, 3);
 
-			HeaderFoldoutStyle = new GUIStyle(editorSkin.GetStyle("IN Foldout"));
-			HeaderFoldoutStyle.name = "HeaderFoldout";
+			HeaderFoldoutStyle = new GUIStyle(editorSkin.GetStyle("Foldout"));
 			HeaderFoldoutStyle.fontSize = 12;
 			HeaderFoldoutStyle.fontStyle = FontStyle.Bold;
 			HeaderFoldoutStyle.focused.textColor = HeaderFoldoutStyle.normal.textColor;
@@ -82,12 +78,10 @@ namespace ImpRock.Cyoi
 			HeaderFoldoutStyle.onActive.textColor = HeaderFoldoutStyle.normal.textColor;
 
 			HeaderBackgroundStyle = new GUIStyle(editorSkin.GetStyle("IN BigTitle"));
-			HeaderBackgroundStyle.name = "HeaderBackground";
 			HeaderBackgroundStyle.padding.left = 1;
 			HeaderBackgroundStyle.padding.right = 1;
-			
+
 			ButtonCloseStyle = new GUIStyle(editorSkin.GetStyle("WinBtnClose"));
-			ButtonCloseStyle.name = "ButtonClose";
 			ButtonCloseStyle.margin.top = 4;
 
 			SubEditorHeaderStyle = new GUIStyle(editorSkin.GetStyle("OL Title"));
@@ -99,7 +93,7 @@ namespace ImpRock.Cyoi
 
 		public void InitAssets()
 		{
-			//n/a											
+			//n/a
 		}
 	}
 }
