@@ -2,7 +2,11 @@
 using System.Reflection;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
+#if UNITY_2020_2_OR_NEWER
+using UnityEditor.AssetImporters;
+#elif UNITY_2017_1_OR_NEWER
 using UnityEditor.Experimental.AssetImporters;
+#endif
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -71,7 +75,7 @@ namespace ImpRock.Cyoi
 					if (setImportEditor != null)
 					{
 						m_SubEditor = Editor.CreateEditor(imported);
-						setImportEditor?.Invoke(m_Editor, new object[] { m_SubEditor });
+						setImportEditor.Invoke(m_Editor, new object[] { m_SubEditor });
 						m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 					}
 				}
@@ -259,7 +263,7 @@ namespace ImpRock.Cyoi
 							MethodInfo setImportEditor = editorType.GetMethod("InternalSetAssetImporterTargetEditor", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 							if (setImportEditor != null)
 							{
-								setImportEditor?.Invoke(m_Editor, new object[] { m_SubEditor });
+								setImportEditor.Invoke(m_Editor, new object[] { m_SubEditor });
 								m_DrawSubEditor = (m_Editor as AssetImporterEditor).showImportedObject;
 							}
 						}
