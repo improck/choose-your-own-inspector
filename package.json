@@ -1,6 +1,6 @@
 {
   "name": "com.improck.cyoi",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "displayName": "Imp Rock - Choose Your Own Inspector",
   "description": "An Editor List for Unity",
   "unity": "2018.3",
@@ -16,6 +16,7 @@
     "url": "https://improck.com"
   },
   "contributors": {
-    "name": "Dean Lackey", "email": "dean@improck.com"
+    "name": "Dean Lackey",
+    "email": "dean@improck.com"
   }
 }
